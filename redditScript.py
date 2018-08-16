@@ -1,12 +1,11 @@
 import urllib3
 import json
 import myTextWrap
-import term
 import math
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 http = urllib3.PoolManager()
-# inputURL = input("give reddit post url. currently needs to be a self post")
-inputURL = 'https://www.reddit.com/r/cars/comments/97ki30/are_those_80eighty_car_giveaways_even_real/'
+inputURL = input("give reddit post url. currently needs to be a self post \n")
+# inputURL = 'https://www.reddit.com/r/cars/comments/97ki30/are_those_80eighty_car_giveaways_even_real/'
 base = http.request('GET', inputURL + '.json')
 
 pageDict = json.loads(base.data.decode('utf-8'))
