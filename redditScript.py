@@ -4,8 +4,15 @@ import myTextWrap
 import math
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 http = urllib3.PoolManager()
-inputURL = input("give reddit post url. currently needs to be a self post \n")
-# inputURL = 'https://www.reddit.com/r/cars/comments/97ki30/are_those_80eighty_car_giveaways_even_real/'
+subreddit = input("enter subreddit name \n")
+subredditRequest = http.request('GET', 'https://www.reddit.com/r/' + subreddit + '.json')
+postsDict = json.loads(subredditRequest.data.decode('utf-8'))
+subredditPosts = postsDict['data']['children']
+print()
+for i in range(len(subredditPosts)):
+    print(str(i) + ": " + subredditPosts[i]['data']['title'])
+chooseIndex = int(input("enter the index of the post you want to view \n"))
+inputURL = subredditPosts[chooseIndex]['data']['url']
 base = http.request('GET', inputURL + '.json')
 
 pageDict = json.loads(base.data.decode('utf-8'))
