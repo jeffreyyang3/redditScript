@@ -16,18 +16,21 @@ for i in range(sizex - 1):
 def recursivePrint(parent, indents, baseDict, tracker): #clean up later
 
     for child in parent:  # workaround to indent new parent comments correctly
-        if(tracker != len(baseDict[1]['data']['children']) and baseDict[1]['data']['children'][tracker] == child):  # sees if comment is new parent comment
+        if(tracker != len(baseDict[1]['data']['children']) and
+                baseDict[1]['data']['children'][tracker] == child):  # sees if comment is new parent comment
                 tracker += 1
                 indents = 0
         #print(child['data']['body'])
         if 'author' in child['data']:
             wrappedParent = myTextWrap.wrap(
-                "> " + child['data']['author'] + ' : ' + str(child['data']['ups']) + ' points: ' + child['data']['body'], sizex) #move to function later
+                "> " + child['data']['author'] + ' : ' + str(child['data']['ups'])
+                + ' points: ' + child['data']['body'], sizex) #move to function later
             myTextWrap.printList(wrappedParent, indents)
         print()
         if 'replies' in child['data'] and 'data' in child['data']['replies']:
             indents += 1
-            recursivePrint(child['data']['replies']['data'] # do the same for all child comments in order, one more indent per recursion level
+            recursivePrint(child['data']['replies']['data']
+                               # do the same for all child comments in order, one more indent per recursion level
                            ['children'], indents, baseDict, tracker)
 
 
@@ -44,7 +47,10 @@ def subredditChoice():
     print('\n' + line)
     chooseIndex = int(input("enter the index of the post you want to view \n"))
     print()
-    inputURL = subredditPosts[chooseIndex]['data']['url']
+    if(subredditPosts[chooseIndex]['data']['is_self']):
+        inputURL = subredditPosts[chooseIndex]['data']['url']
+    else:
+        inputURL = 'https://www.reddit.com' + subredditPosts[chooseIndex]['data']['permalink']
 
     postAndReplies(inputURL,subredditPosts)
 
@@ -55,7 +61,11 @@ def postAndReplies(url, subredditPosts):
     base = http.request('GET', url + '.json')
     pageDict = json.loads(base.data.decode('utf-8'))
     title = pageDict[0]['data']['children'][0]['data']['title']
-    post = pageDict[0]['data']['children'][0]['data']['selftext']
+    if pageDict[0]['data']['children'][0]['data']['is_self']:
+        post = pageDict[0]['data']['children'][0]['data']['selftext']
+    else:
+        post = "Link: " + pageDict[0]['data']['children'][0]['data']['url']
+
 
     print('Post: \n' + title + '\n')
     wrappedPost = myTextWrap.wrap(post, sizex)
